@@ -11,7 +11,6 @@ export const post = async (url, body, headers, isRaw) => {
   
       if (!response.ok) {
         // Log the error response body for debugging
-        const errorText = await response.text();
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       

@@ -4,14 +4,12 @@ import { useSelector } from 'react-redux';
 import { Paper, FormGroup, FormControlLabel, Checkbox, IconButton, Typography, Grid, TextField, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import NumbersIcon from '@mui/icons-material/Numbers';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CakeIcon from '@mui/icons-material/Cake';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import BadgeIcon from '@mui/icons-material/Badge';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
-import { LocationCityRounded } from '@mui/icons-material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Import ArrowBackIcon
 
 function VeratadResult({capturedImage, onBack}) {
@@ -83,7 +81,7 @@ function VeratadResult({capturedImage, onBack}) {
           <Box display="flex" justifyContent="center" style={{ backgroundColor: '#585353', padding: '10px', marginBottom: '10px' }}>
             <img
               src={capturedImage}
-              alt="Captured Image"
+              alt="Captured_Image"
               style={{ maxWidth: '100%', maxHeight: '300px' }}
             />
           </Box>
