@@ -1,0 +1,39 @@
+/* src/components/CameraCapture.css */
+.camera-capture-container {
+    padding: 20px;
+  }
+  
+  
+  .camera-capture-paper {
+    padding: 20px;
+  }
+  
+  .camera-capture-header {
+    display: flex;
+    align-items: center;
+  }
+  
+  .camera-capture-icon {
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  
+  .camera-view-video {
+    max-width: 100%;
+  }
+  
+  .image-preview-img {
+    max-width: 100%;
+  }
+  
+  .image-preview-retake {
+    margin-top: 10px;
+  }
+  
+  .action-buttons-container {
+    margin-top: 10px;
+  }
+  
+  .action-buttons-submit {
+    margin-top: 20px;
+  }
