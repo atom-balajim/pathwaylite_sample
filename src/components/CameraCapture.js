@@ -42,9 +42,10 @@ function CameraCapture() {
   const [cameraStarted, setCameraStarted] = useState(false);
   const [isImageCaptured, setIsImageCaptured] = useState(false);
   const [showVeratadResult, setShowVeratadResult] = useState(false);
-  const [_, forceUpdate] = useState({});
+  const [forceUpdate1, forceUpdate] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
 
+  console.log("forceUpdate1",forceUpdate1)
   const handleStartCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
