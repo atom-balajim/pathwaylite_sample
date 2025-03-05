@@ -40,11 +40,11 @@ function CameraView({ cameraStarted, videoRef }) {
             top: '10px',
             right: '10px',
             zIndex: 100, // Increase z-index
-            backgroundColor: 'rgba(255, 255, 255, 0.7)', // Add background color for visibility
+            backgroundColor: 'red', // Add background color for visibility
             padding: '8px', // Add some padding
           }}
         >
-          <FlipCameraAndroidIcon />
+          <FlipCameraAndroidIcon style={{color:'red'}}/>
         </IconButton>
       )}
     </div>

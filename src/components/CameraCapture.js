@@ -50,18 +50,19 @@ function CameraCapture() {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
-
+  
       const constraints = {
         video: {
           facingMode: rearCamera ? { exact: 'environment' } : 'user',
         },
       };
-
+  
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         dispatch(startCamera());
         setCameraStarted(true);
+        console.log('Camera started:', cameraStarted); // Log the state AFTER setting it to true
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
@@ -138,7 +139,7 @@ function CameraCapture() {
           <Paper elevation={3} className="camera-capture-paper">
             <Typography variant="h6" gutterBottom className="camera-capture-header">
               <CameraAltIcon className="camera-capture-icon" />
-              Camera Capture
+              Camera Capture as
             </Typography>
 
             {showVeratadResult ? (
