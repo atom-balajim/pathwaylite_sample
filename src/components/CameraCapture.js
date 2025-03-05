@@ -59,7 +59,7 @@ function CameraCapture() {
       console.error('Error accessing camera:', error);
       setOpenDialog(true);
     }
-  }, [dispatch]); // Added dispatch to dependency array
+  }, [dispatch, videoRef]); // Added videoRef to dependency array
 
   const handleCaptureImage = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
@@ -79,7 +79,7 @@ function CameraCapture() {
       setIsImageCaptured(true);
       setImagePreview(imageDataUrl);
     }
-  }, [videoRef, canvasRef]); // Added dependency array
+  }, [videoRef, canvasRef, dispatch]); // Added dispatch to dependency array
 
   const handleRetake = useCallback(async () => {
     setImagePreview(null);
@@ -96,7 +96,7 @@ function CameraCapture() {
       console.error('Error accessing camera:', error);
       setOpenDialog(true);
     }
-  },); // No dependencies needed here
+  }, [videoRef]); // added videoRef to dependency array
 
   const handleSubmit = async () => {
     dispatch(sendVeratad(capturedImage));
