@@ -1,13 +1,13 @@
 // src/components/CameraView.js
-import React, { useState } from 'react'; // Remove useCallback
+import React, { useState } from 'react';
 import Webcam from "react-webcam";
 import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
+import './CameraCapture.css';
 
 function CameraView({ cameraStarted }) {
   const [facingMode, setFacingMode] = useState('environment');
 
-  // Removed useCallback
   const handleFlipCamera = () => {
     setFacingMode(prevFacingMode =>
       prevFacingMode === 'user' ? 'environment' : 'user'
@@ -19,7 +19,7 @@ function CameraView({ cameraStarted }) {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="camera-view-container"> {/* Add container for styling */}
       {cameraStarted && (
         <>
           <Webcam

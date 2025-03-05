@@ -37,3 +37,27 @@
   .action-buttons-submit {
     margin-top: 20px;
   }
+
+  /* src/components/CameraView.css */
+.camera-view-container {
+  width: 100%; /* Ensure container takes full width */
+}
+
+.camera-view-container webcam {
+  width: 100% !important; /* Force webcam to be 100% */
+  height: auto !important; /* Maintain aspect ratio */
+}
+
+@media (max-width: 768px) {
+  .camera-view-container webcam {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+@media (max-width: 400px) { /* Add this media query */
+  .camera-view-container webcam {
+    max-width: 100% !important; /* Adjust as needed */
+    height: 250px !important; /* Adjust as needed */
+  }
+}
