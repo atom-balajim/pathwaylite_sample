@@ -50,13 +50,13 @@ function CameraCapture() {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
-  
+
       const constraints = {
         video: {
-          facingMode: rearCamera ? { exact: 'environment' } : 'user', // Prefer 'environment' (rear) if available
+          facingMode: rearCamera ? { exact: 'environment' } : 'user',
         },
       };
-  
+
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -109,24 +109,23 @@ function CameraCapture() {
   const handleSubmit = async () => {
     dispatch(sendVeratad(capturedImage));
     try {
-        const ocrService = new OcrService(getOcrServiceData());
-        let licenseBase64 = capturedImage
-    ? capturedImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '')
-    : '';
-if(licenseBase64 === capturedImage){
-    console.error("Regex replace failed");
-}
-        const response = await ocrService.CallOcr(licenseBase64, '', IdType.LICENSE);
-        if (response === undefined) {
-            throw new Error('OCR Scan not work offline');
-        }
-        dispatch(veratadSuccess(response.data));
-        setShowVeratadResult(true);
+      const ocrService = new OcrService(getOcrServiceData());
+      let licenseBase64 = capturedImage
+        ? capturedImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '')
+        : '';
+      if (licenseBase64 === capturedImage) {
+        console.error("Regex replace failed");
+      }
+      const response = await ocrService.CallOcr(licenseBase64, '', IdType.LICENSE);
+      if (response === undefined) {
+        throw new Error('OCR Scan not work offline');
+      }
+      dispatch(veratadSuccess(response.data));
+      setShowVeratadResult(true);
     } catch (error) {
-        dispatch(veratadFailure(error.message || 'Error processing OCR data'));
+      dispatch(veratadFailure(error.message || 'Error processing OCR data'));
     }
-};
-
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -149,7 +148,7 @@ if(licenseBase64 === capturedImage){
                 {imagePreview ? (
                   <ImagePreview imagePreview={imagePreview} handleRetake={handleRetake} />
                 ) : (
-                  <CameraView videoRef={videoRef} />
+                  <CameraView videoRef={videoRef} cameraStarted={cameraStarted} /> // Pass cameraStarted prop
                 )}
                 <canvas ref={canvasRef} style={{ display: 'none' }} />
                 <ActionButtons
@@ -159,6 +158,7 @@ if(licenseBase64 === capturedImage){
                   handleCaptureImage={handleCaptureImage}
                   handleSubmit={handleSubmit}
                   isImageCaptured={isImageCaptured}
+                  handleRetake={handleRetake}
                 />
               </div>
             )}

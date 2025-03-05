@@ -1,4 +1,5 @@
 export const post = async (url, body, headers, isRaw) => {
+  console.log('BaseService URL:', url); // Log the URL
     try {
       const response = await fetch(url, {
         method: 'POST',
