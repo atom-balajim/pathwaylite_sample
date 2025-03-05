@@ -15,12 +15,12 @@ function ActionButtons({
     <Grid container spacing={2} className="action-buttons-container">
       {imagePreview ? null : (
         <>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Button variant="contained" color="primary" onClick={handleStartCamera} fullWidth>
               Start Camera
             </Button>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Button
               variant="contained"
               color="primary"

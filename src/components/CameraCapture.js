@@ -48,7 +48,16 @@ function CameraCapture() {
   console.log("forceUpdate1",forceUpdate1)
   const handleStartCamera = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
+  
+      const constraints = {
+        video: {
+          facingMode: rearCamera ? { exact: 'environment' } : 'user', // Prefer 'environment' (rear) if available
+        },
+      };
+  
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         dispatch(startCamera());
