@@ -1,5 +1,5 @@
 // src/components/CameraView.js
-import React, { useRef, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 
