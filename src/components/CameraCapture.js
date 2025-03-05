@@ -61,7 +61,7 @@ function CameraCapture() {
     }
   }, [dispatch]);
 
-  const handleCaptureImage = () => {
+  const handleCaptureImage = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext('2d');
       canvasRef.current.width = videoRef.current.videoWidth;
@@ -79,7 +79,7 @@ function CameraCapture() {
       setIsImageCaptured(true);
       setImagePreview(imageDataUrl);
     }
-  };
+  }, [videoRef, canvasRef]); // Added dependency array
 
   const handleRetake = useCallback(async () => {
     setImagePreview(null);
