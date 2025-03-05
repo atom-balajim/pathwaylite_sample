@@ -47,7 +47,6 @@ function CameraView({ cameraStarted, videoRef }) {
           <FlipCameraAndroidIcon />
         </IconButton>
       )}
-      {newFacingMode}
     </div>
   );
 }
