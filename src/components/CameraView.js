@@ -1,5 +1,5 @@
 // src/components/CameraView.js
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Remove useCallback
 import Webcam from "react-webcam";
 import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
@@ -20,7 +20,6 @@ function CameraView({ cameraStarted }) {
 
   return (
     <div style={{ position: 'relative' }}>
-      <h1>{facingMode}</h1>
       {cameraStarted && (
         <>
           <Webcam
