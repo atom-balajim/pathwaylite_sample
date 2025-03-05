@@ -59,7 +59,7 @@ function CameraCapture() {
       console.error('Error accessing camera:', error);
       setOpenDialog(true);
     }
-  }, [dispatch]);
+  }, [dispatch]); // Added dispatch to dependency array
 
   const handleCaptureImage = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
