@@ -1,51 +1,48 @@
 // src/components/CameraView.js
-import React, { useCallback, useState } from 'react'; // Removed useRef from import
+import React, { useCallback, useState } from 'react';
+import Webcam from "react-webcam";
 import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 
-function CameraView({ cameraStarted, videoRef }) {
-  const [facingMode, setFacingMode] = useState('environment');
+function CameraView({ cameraStarted }) {
+  const [facingMode, setFacingMode] = useState('environment'); // Default to rear camera
 
-  const handleFlipCamera = useCallback(async () => {
-    if (!cameraStarted) return;
+  const handleFlipCamera = useCallback(() => {
+    setFacingMode(prevFacingMode =>
+      prevFacingMode === 'user' ? 'environment' : 'user'
+    );
+  },);
 
-    const newFacingMode = facingMode === 'user' ? 'environment' : 'user';
-    setFacingMode(newFacingMode);
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: newFacingMode },
-      });
-      videoRef.current.srcObject = stream;
-    } catch (error) {
-      console.error('Error switching camera:', error);
-    }
-  }, [cameraStarted, facingMode, videoRef]);
+  const videoConstraints = {
+    facingMode: facingMode
+  };
 
   return (
     <div style={{ position: 'relative' }}>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        className="camera-view-video"
-      />
+      <h1>{facingMode}</h1>
       {cameraStarted && (
-        <IconButton
-          onClick={handleFlipCamera}
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            zIndex: 100,
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-            padding: '8px',
-          }}
-        >
-          <FlipCameraAndroidIcon />
-        </IconButton>
+        <>
+          <Webcam
+            audio={false}
+            videoConstraints={videoConstraints}
+            mirrored={facingMode === 'user'}
+          />
+          <IconButton
+            onClick={handleFlipCamera}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              zIndex: 100,
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              padding: '8px',
+            }}
+          >
+            <FlipCameraAndroidIcon />
+          </IconButton>
+        </>
       )}
+      
     </div>
   );
 }

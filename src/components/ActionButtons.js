@@ -28,7 +28,7 @@ function ActionButtons({
               fullWidth
               disabled={!cameraStarted}
             >
-              Capture Image
+              Capture Image -1
             </Button>
           </Grid>
         </>

@@ -1,5 +1,5 @@
 // src/components/CameraCapture.js
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   startCamera,
@@ -34,8 +34,6 @@ const theme = createTheme({
 });
 
 function CameraCapture() {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
   const dispatch = useDispatch();
   const capturedImage = useSelector((state) => state.other.capturedImage);
   const [openDialog, setOpenDialog] = useState(false);
@@ -48,57 +46,40 @@ function CameraCapture() {
   console.log("forceUpdate1", forceUpdate1);
 
   const handleStartCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        dispatch(startCamera());
-        setCameraStarted(true);
-      }
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      setOpenDialog(true);
-    }
-  }, [dispatch, videoRef]); // Added videoRef to dependency array
+    dispatch(startCamera());
+    setCameraStarted(true);
+  }, [dispatch]);
 
   const handleCaptureImage = useCallback(() => {
-    if (videoRef.current && canvasRef.current) {
-      const context = canvasRef.current.getContext('2d');
-      canvasRef.current.width = videoRef.current.videoWidth;
-      canvasRef.current.height = videoRef.current.videoHeight;
-      context.drawImage(
-        videoRef.current,
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height
-      );
-      const imageDataUrl = canvasRef.current.toDataURL('image/jpeg');
-      dispatch(captureImage(imageDataUrl));
-      forceUpdate({});
-      setIsImageCaptured(true);
-      setImagePreview(imageDataUrl);
-    }
-  }, [videoRef, canvasRef, dispatch]); // Added dispatch to dependency array
+    if (cameraStarted) {
+      // Assuming CameraView now uses react-webcam, the capture is handled within.
+      // We just need to trigger the capture and set the imagePreview.
+      const webcam = document.querySelector('video'); // Select the video element from react-webcam
+      if (webcam) {
+        const canvas = document.createElement('canvas');
+        canvas.width = webcam.videoWidth;
+        canvas.height = webcam.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+        const imageDataUrl = canvas.toDataURL('image/jpeg');
 
-  const handleRetake = useCallback(async () => {
+        dispatch(captureImage(imageDataUrl));
+        forceUpdate({});
+        setIsImageCaptured(true);
+        setImagePreview(imageDataUrl);
+      }
+    }
+  }, [cameraStarted, dispatch]);
+
+  const handleRetake = useCallback(() => {
     setImagePreview(null);
     setIsImageCaptured(false);
     setCameraStarted(false);
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setCameraStarted(true);
-      }
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      setOpenDialog(true);
-    }
-  }, [videoRef]); // added videoRef to dependency array
+  }, []);
 
   const handleSubmit = async () => {
+    console.log("capturedImage:", capturedImage); // Log the captured image
+  
     dispatch(sendVeratad(capturedImage));
     try {
       const ocrService = new OcrService(getOcrServiceData());
@@ -109,13 +90,18 @@ function CameraCapture() {
         console.error("Regex replace failed");
       }
       const response = await ocrService.CallOcr(licenseBase64, '', IdType.LICENSE);
+      console.log("OCR response:", response); // Log the OCR response
+  
       if (response === undefined) {
         throw new Error('OCR Scan not work offline');
       }
       dispatch(veratadSuccess(response.data));
+      console.log("Veratad success dispatched"); // Log dispatch action
       setShowVeratadResult(true);
     } catch (error) {
+      console.error("OCR error:", error); // Log any errors
       dispatch(veratadFailure(error.message || 'Error processing OCR data'));
+      console.log("Veratad failure dispatched"); // Log dispatch action
     }
   };
 
@@ -140,9 +126,8 @@ function CameraCapture() {
                 {imagePreview ? (
                   <ImagePreview imagePreview={imagePreview} handleRetake={handleRetake} />
                 ) : (
-                  <CameraView videoRef={videoRef} cameraStarted={cameraStarted} />
+                  <CameraView cameraStarted={cameraStarted} />
                 )}
-                <canvas ref={canvasRef} style={{ display: 'none' }} />
                 <ActionButtons
                   imagePreview={imagePreview}
                   cameraStarted={cameraStarted}
