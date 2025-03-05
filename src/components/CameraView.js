@@ -4,7 +4,7 @@ import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 
 function CameraView({ cameraStarted, videoRef }) {
-  const [facingMode, setFacingMode] = React.useState('environment'); // Default to rear camera
+  const [facingMode, setFacingMode] = React.useState('environment');
 
   const handleFlipCamera = useCallback(async () => {
     if (!cameraStarted) return;
@@ -19,12 +19,11 @@ function CameraView({ cameraStarted, videoRef }) {
       videoRef.current.srcObject = stream;
     } catch (error) {
       console.error('Error switching camera:', error);
-      // Handle the error, e.g., display an error message to the user
     }
-  }, [cameraStarted, facingMode, videoRef]);
+  }, [cameraStarted, facingMode, videoRef]); // Added cameraStarted to the dependency array
 
   return (
-    <div style={{ position: 'relative' }}> {/* Add a container for positioning */}
+    <div style={{ position: 'relative' }}>
       <video
         ref={videoRef}
         autoPlay
@@ -39,14 +38,15 @@ function CameraView({ cameraStarted, videoRef }) {
             position: 'absolute',
             top: '10px',
             right: '10px',
-            zIndex: 100, // Increase z-index
-            backgroundColor: 'red', // Add background color for visibility
-            padding: '8px', // Add some padding
+            zIndex: 100,
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            padding: '8px',
           }}
         >
-          <FlipCameraAndroidIcon style={{color:'red'}}/>
+          <FlipCameraAndroidIcon />
         </IconButton>
       )}
+      {facingMode}
     </div>
   );
 }
