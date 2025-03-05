@@ -1,6 +1,7 @@
+// EnvironmentConfigService.js
 export const getOcrServiceData = () => {
   return {
-    url: "https://docs.idresponse.com/process/comprehensive/gateway",
+    url: "/process/comprehensive/gateway", // Use relative path
     user: "wsibm@rjrt.com",
     key: "Rfjguihf4!dhfuijvhu@df",
     service: "DCAMSPLUS5.0.TEST",
