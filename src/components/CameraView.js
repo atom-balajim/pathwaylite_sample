@@ -1,17 +1,18 @@
 // src/components/CameraView.js
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import Webcam from "react-webcam";
 import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 
 function CameraView({ cameraStarted }) {
-  const [facingMode, setFacingMode] = useState('environment'); // Default to rear camera
+  const [facingMode, setFacingMode] = useState('environment');
 
-  const handleFlipCamera = useCallback(() => {
+  // Removed useCallback
+  const handleFlipCamera = () => {
     setFacingMode(prevFacingMode =>
       prevFacingMode === 'user' ? 'environment' : 'user'
     );
-  },);
+  };
 
   const videoConstraints = {
     facingMode: facingMode
@@ -42,7 +43,6 @@ function CameraView({ cameraStarted }) {
           </IconButton>
         </>
       )}
-      
     </div>
   );
 }
