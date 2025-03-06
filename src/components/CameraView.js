@@ -1,3 +1,4 @@
+// src/components/CameraView.js
 import React, { useState, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import { IconButton } from '@mui/material';
@@ -5,32 +6,39 @@ import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 import './CameraCapture.css';
 
 function CameraView({ cameraStarted }) {
-  const [facingMode, setFacingMode] = useState(null); // Initially null
+  const [facingMode, setFacingMode] = useState(null);
 
   const handleFlipCamera = () => {
-    setFacingMode(prevFacingMode =>
+    setFacingMode((prevFacingMode) =>
       prevFacingMode === 'user' ? 'environment' : 'user'
     );
   };
 
   const videoConstraints = {
-    facingMode: facingMode
+    facingMode: facingMode,
   };
 
   useEffect(() => {
     // Get available cameras and set facingMode
     const getCameras = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const rearCamera = devices.find(
-        (device) =>
-          device.kind === 'videoinput' &&
-          device.label.toLowerCase().includes('rear')
-      );
-      if (rearCamera) {
-        setFacingMode(rearCamera.deviceId);
-      } else {
-        // Handle the case where no rear camera is found
-        setFacingMode('user'); // Default to front camera
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const rearCamera = devices.find(
+          (device) =>
+            device.kind === 'videoinput' &&
+            (device.label.toLowerCase().includes('rear') ||
+              device.label.toLowerCase().includes('back') ||
+              device.label.toLowerCase().includes('environment')) // More comprehensive check
+        );
+        if (rearCamera) {
+          setFacingMode({ exact: rearCamera.deviceId });
+        } else {
+          // Handle the case where no rear camera is found
+          setFacingMode('user'); // Default to front camera
+        }
+      } catch (error) {
+        console.error('Error getting camera devices:', error);
+        // Handle the error appropriately (e.g., show an error message)
       }
     };
 
