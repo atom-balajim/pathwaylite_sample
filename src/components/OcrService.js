@@ -1,6 +1,5 @@
 import { post } from './BaseService'; // Adjust path as needed
 
-
 export default class OcrService {
   constructor(creds) {
     this.creds = creds;
@@ -34,7 +33,8 @@ export default class OcrService {
       age: '21+',
     };
 
-    let ocrResponse = await post(this.creds.url, raw, { redacted: [documentType] }, true);
+    // Updated line: Call the Netlify Function
+    let ocrResponse = await post('/.netlify/functions/ocr-proxy', raw, { redacted: [documentType] }, true);
     return ocrResponse;
   }
 }
