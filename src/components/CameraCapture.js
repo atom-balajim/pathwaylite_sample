@@ -65,7 +65,7 @@ const hardcodedOcrResponse = {
   result: {
     action: 'FAIL',
     detail: 'DOCUMENT AGE CHECK FAILED',
-    issues:,
+    issues:[],
   },
 };
 
