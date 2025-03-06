@@ -72,11 +72,11 @@ function CameraCapture() {
     }
   };
 
-  const handleRetake = useCallback(() => {
+  const handleRetake = () => {
     setImagePreview(null);
     setIsImageCaptured(false);
     setCameraStarted(false);
-  },);
+};
 
   const handleSubmit = async () => {
     console.log("capturedImage:", capturedImage);
