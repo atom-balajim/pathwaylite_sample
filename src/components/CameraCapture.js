@@ -1,73 +1,72 @@
-// src/components/CameraCapture.js
-import React, { useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   startCamera,
   captureImage,
   sendVeratad,
   veratadSuccess,
   veratadFailure,
-} from "../redux/actions";
+} from '../redux/actions';
 import {
   Grid,
   Paper,
   Typography,
   createTheme,
   ThemeProvider,
-} from "@mui/material";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import VeratadResult from "./VeratadResult";
-import ImagePreview from "./ImagePreview";
-import CameraView from "./CameraView";
-import CameraDialog from "./CameraDialog";
-import ActionButtons from "./ActionButtons";
-import "./CameraCapture.css";
+} from '@mui/material';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import VeratadResult from './VeratadResult';
+import ImagePreview from './ImagePreview';
+import CameraView from './CameraView';
+import CameraDialog from './CameraDialog';
+import ActionButtons from './ActionButtons';
+import './CameraCapture.css';
 
 const theme = createTheme({
   palette: {
     secondary: {
-      main: "#FFA500",
+      main: '#FFA500',
     },
   },
 });
 
 const hardcodedOcrResponse = {
-  "meta": {
-    "confirmation": 190220912,
-    "timestamp": "2025-03-06 09:46:19",
-    "reference": null,
-    "user": "wsibm@rjrt.com",
-    "company": "RJ Reynolds American Inc.",
-    "service": "DCAMSPLUS5.0.TEST"
+  meta: {
+    confirmation: 190220912,
+    timestamp: '2025-03-06 09:46:19',
+    reference: null,
+    user: 'wsibm@rjrt.com',
+    company: 'RJ Reynolds American Inc.',
+    service: 'DCAMSPLUS5.0.TEST',
   },
-  "output": {
-    "documents": {
-      "FirstName": "SANTOSH",
-      "LastName": "PATIL",
-      "MiddleName": "",
-      "FullName": "",
-      "Address": "17264 NE 8TH ST APT A",
-      "City": "BELLEVUE",
-      "State": "WA",
-      "Zip": "980084145",
-      "CountryCode": "US",
-      "FullAddress": "",
-      "DateOfBirth": "19800511",
-      "Height": "068 in",
-      "Sex": "M",
-      "EyeColor": "BRO",
-      "DocumentNumber": "WDL65TS2443B",
-      "DocumentType": "DRIVERS LICENSE",
-      "SourceDocumentType": "",
-      "IssueDate": "20200814",
-      "ExpirationDate": "20260511"
-    }
+  output: {
+    documents: {
+      FirstName: 'SANTOSH',
+      LastName: 'PATIL',
+      MiddleName: '',
+      FullName: '',
+      Address: '17264 NE 8TH ST APT A',
+      City: 'BELLEVUE',
+      State: 'WA',
+      Zip: '980084145',
+      CountryCode: 'US',
+      FullAddress: '',
+      DateOfBirth: '19800511',
+      Height: '068 in',
+      Sex: 'M',
+      EyeColor: 'BRO',
+      DocumentNumber: 'WDL65TS2443B',
+      DocumentType: 'DRIVERS LICENSE',
+      SourceDocumentType: '',
+      IssueDate: '20200814',
+      ExpirationDate: '20260511',
+    },
   },
-  "result": {
-    "action": "FAIL",
-    "detail": "DOCUMENT AGE CHECK FAILED",
-    "issues": []
-  }
+  result: {
+    action: 'FAIL',
+    detail: 'DOCUMENT AGE CHECK FAILED',
+    issues:,
+  },
 };
 
 function CameraCapture() {
@@ -80,29 +79,29 @@ function CameraCapture() {
   const [forceUpdate1, forceUpdate] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
 
-  console.log("forceUpdate1", forceUpdate1);
+  console.log('forceUpdate1', forceUpdate1);
 
   const handleStartCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      console.log("Camera access granted!", stream);
+      console.log('Camera access granted!', stream);
       dispatch(startCamera());
       setCameraStarted(true);
     } catch (error) {
-      console.error("Error accessing camera:", error);
+      console.error('Error accessing camera:', error);
     }
   }, [dispatch]);
 
   const handleCaptureImage = () => {
     if (cameraStarted) {
-      const webcam = document.querySelector("video");
+      const webcam = document.querySelector('video');
       if (webcam) {
-        const canvas = document.createElement("canvas");
+        const canvas = document.createElement('canvas');
         canvas.width = webcam.videoWidth;
         canvas.height = webcam.videoHeight;
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
-        const imageDataUrl = canvas.toDataURL("image/jpeg");
+        const imageDataUrl = canvas.toDataURL('image/jpeg');
 
         dispatch(captureImage(imageDataUrl));
         forceUpdate({});
@@ -121,17 +120,19 @@ function CameraCapture() {
   };
 
   const handleSubmit = async () => {
-    console.log("capturedImage:", capturedImage);
+    console.log('capturedImage:', capturedImage);
     dispatch(sendVeratad(capturedImage));
     try {
       const response = hardcodedOcrResponse; // Using hardcoded response
       dispatch(veratadSuccess(response));
-      console.log("Veratad success dispatched");
+      console.log('Veratad success dispatched');
       setShowVeratadResult(true);
     } catch (error) {
-      console.error("OCR error:", error);
-      dispatch(veratadFailure(error.message || "Error processing OCR data"));
-      console.log("Veratad failure dispatched");
+      console.error('OCR error:', error);
+      dispatch(
+        veratadFailure(error.message || 'Error processing OCR data')
+      );
+      console.log('Veratad failure dispatched');
     }
   };
 
@@ -164,7 +165,7 @@ function CameraCapture() {
                 onBack={() => setShowVeratadResult(false)}
               />
             ) : (
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: 'center' }}>
                 {imagePreview ? (
                   <ImagePreview
                     imagePreview={imagePreview}
