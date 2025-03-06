@@ -34,7 +34,7 @@ export default class OcrService {
     };
 
     // Updated line: Call the Netlify Function
-    let ocrResponse = await post('/.netlify/functions/ocr-proxy', raw, { redacted: [documentType] }, true);
+    let ocrResponse = await post(this.creds.url, raw, { redacted: [documentType] }, true);
     return ocrResponse;
   }
 }
