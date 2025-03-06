@@ -1,5 +1,5 @@
 // src/components/CameraCapture.js
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   startCamera,
@@ -16,12 +16,12 @@ import {
   Typography,
   createTheme,
   ThemeProvider,
+  Button,
+  CircularProgress,
 } from '@mui/material';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import VeratadResult from './VeratadResult';
-import CameraView from './CameraView';
 import ImagePreview from './ImagePreview';
-import ActionButtons from './ActionButtons';
 import CameraDialog from './CameraDialog';
 import './CameraCapture.css';
 
@@ -42,32 +42,39 @@ function CameraCapture() {
   const [showVeratadResult, setShowVeratadResult] = useState(false);
   const [forceUpdate1, forceUpdate] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Add isLoading state
+  const videoRef = useRef(null);
 
   console.log("forceUpdate1", forceUpdate1);
 
   const handleStartCamera = useCallback(async () => {
     dispatch(startCamera());
     setCameraStarted(true);
+  
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' } // Set facingMode to 'environment'
+      });
+      videoRef.current.srcObject = stream;
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      // Handle the error, e.g., display an error message to the user
+    }
   }, [dispatch]);
 
   const handleCaptureImage = useCallback(() => {
-    if (cameraStarted) {
-      // Assuming CameraView now uses react-webcam, the capture is handled within.
-      // We just need to trigger the capture and set the imagePreview.
-      const webcam = document.querySelector('video'); // Select the video element from react-webcam
-      if (webcam) {
-        const canvas = document.createElement('canvas');
-        canvas.width = webcam.videoWidth;
-        canvas.height = webcam.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
-        const imageDataUrl = canvas.toDataURL('image/jpeg');
+    if (cameraStarted && videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const imageDataUrl = canvas.toDataURL('image/jpeg');
 
-        dispatch(captureImage(imageDataUrl));
-        forceUpdate({});
-        setIsImageCaptured(true);
-        setImagePreview(imageDataUrl);
-      }
+      dispatch(captureImage(imageDataUrl));
+      forceUpdate({});
+      setIsImageCaptured(true);
+      setImagePreview(imageDataUrl);
     }
   }, [cameraStarted, dispatch]);
 
@@ -75,11 +82,17 @@ function CameraCapture() {
     setImagePreview(null);
     setIsImageCaptured(false);
     setCameraStarted(false);
-  }, []);
+  },);
 
   const handleSubmit = async () => {
-    console.log("capturedImage:", capturedImage); // Log the captured image
-  
+    console.log("capturedImage:", capturedImage);
+
+    if (!capturedImage) {
+      console.error("No image captured");
+      return;
+    }
+
+    setIsLoading(true); // Set isLoading to true
     dispatch(sendVeratad(capturedImage));
     try {
       const ocrService = new OcrService(getOcrServiceData());
@@ -90,18 +103,20 @@ function CameraCapture() {
         console.error("Regex replace failed");
       }
       const response = await ocrService.CallOcr(licenseBase64, '', IdType.LICENSE);
-      console.log("OCR response:", response); // Log the OCR response
-  
+      console.log("OCR response:", response);
+
       if (response === undefined) {
         throw new Error('OCR Scan not work offline');
       }
       dispatch(veratadSuccess(response.data));
-      console.log("Veratad success dispatched"); // Log dispatch action
+      console.log("Veratad success dispatched");
       setShowVeratadResult(true);
     } catch (error) {
-      console.error("OCR error:", error); // Log any errors
+      console.error("OCR error:", error);
       dispatch(veratadFailure(error.message || 'Error processing OCR data'));
-      console.log("Veratad failure dispatched"); // Log dispatch action
+      console.log("Veratad failure dispatched");
+    } finally {
+      setIsLoading(false); // Set isLoading to false in finally
     }
   };
 
@@ -126,16 +141,57 @@ function CameraCapture() {
                 {imagePreview ? (
                   <ImagePreview imagePreview={imagePreview} handleRetake={handleRetake} />
                 ) : (
-                  <CameraView cameraStarted={cameraStarted} />
+                  <div>
+                    <video ref={videoRef} autoPlay />
+                  </div>
                 )}
-                <ActionButtons
-                  imagePreview={imagePreview}
-                  cameraStarted={cameraStarted}
-                  handleStartCamera={handleStartCamera}
-                  handleCaptureImage={handleCaptureImage}
-                  handleSubmit={handleSubmit}
-                  isImageCaptured={isImageCaptured}
-                />
+
+                <div>
+                  {!isImageCaptured && cameraStarted && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleCaptureImage}
+                      style={{ marginTop: '16px' }}
+                    >
+                      Capture Image
+                    </Button>
+                  )}
+                  {isImageCaptured && (
+                    <div style={{ marginTop: '16px' }}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleRetake}
+                        style={{ marginRight: '8px' }}
+                      >
+                        Retake
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                        disabled={isLoading} // Disable button while loading
+                      >
+                        {isLoading ? ( // Show loading indicator
+                          <CircularProgress size={24} color="inherit" />
+                        ) : (
+                          'Submit'
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  {!cameraStarted && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleStartCamera}
+                      style={{ marginTop: '16px' }}
+                    >
+                      Start Camera
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </Paper>
