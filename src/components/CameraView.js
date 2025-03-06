@@ -1,5 +1,5 @@
 // src/components/CameraView.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Webcam from "react-webcam";
 import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
@@ -18,14 +18,25 @@ function CameraView({ cameraStarted }) {
     facingMode: facingMode
   };
 
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        console.log('Camera access granted!');
+      })
+      .catch(error => {
+        console.error('Error accessing camera:', error);
+      });
+  }, []);
+
   return (
-    <div className="camera-view-container"> {/* Add container for styling */}
+    <div className="camera-view-container">
       {cameraStarted && (
         <>
           <Webcam
             audio={false}
             videoConstraints={videoConstraints}
             mirrored={facingMode === 'user'}
+            style={{ maxWidth: '100%', maxHeight: '80vh' }} // Add these styles
           />
           <IconButton
             onClick={handleFlipCamera}
