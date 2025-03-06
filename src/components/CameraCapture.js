@@ -50,24 +50,27 @@ function CameraCapture() {
     setCameraStarted(true);
   }, [dispatch]);
 
-  const handleCaptureImage = useCallback(async () => {
+  const handleCaptureImage = () => { // Removed useCallback
     if (cameraStarted) {
-        const webcam = document.querySelector('video');
-        if (webcam) {
-            const canvas = document.createElement('canvas');
-            canvas.width = webcam.videoWidth;
-            canvas.height = webcam.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
-            const imageDataUrl = canvas.toDataURL('image/jpeg');
+      const webcam = document.querySelector('video');
+      if (webcam) {
+        const canvas = document.createElement('canvas');
+        canvas.width = webcam.videoWidth;
+        canvas.height = webcam.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+        const imageDataUrl = canvas.toDataURL('image/jpeg');
 
-            dispatch(captureImage(imageDataUrl));
-            forceUpdate({});
-            setIsImageCaptured(true);
-            setImagePreview(imageDataUrl);
-        }
+        dispatch(captureImage(imageDataUrl));
+        forceUpdate({});
+        setIsImageCaptured(true);
+        setImagePreview(imageDataUrl);
+
+        // Call handleSubmit directly after capturing the image
+        handleSubmit();
+      }
     }
-}, [cameraStarted, dispatch]);
+  };
 
   const handleRetake = useCallback(() => {
     setImagePreview(null);
