@@ -76,7 +76,7 @@ function CameraCapture() {
       setIsImageCaptured(true);
       setImagePreview(imageDataUrl);
     }
-  }, [cameraStarted, dispatch]);
+  }, [cameraStarted, dispatch,videoRef]);
 
   const handleRetake = useCallback(() => {
     setImagePreview(null);
