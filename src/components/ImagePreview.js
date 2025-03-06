@@ -1,6 +1,6 @@
 // src/components/ImagePreview.js
 import React from 'react';
-import { Box, Button, Grid } from '@mui/material';
+import { Box} from '@mui/material';
 
 
 function ImagePreview({ imagePreview, handleRetake }) {
