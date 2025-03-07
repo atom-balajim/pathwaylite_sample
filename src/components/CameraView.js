@@ -4,7 +4,7 @@ import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 import './CameraCapture.css';
 
 function CameraView({ cameraStarted }) {
-  const [facingMode, setFacingMode] = useState('user'); // Default to user (front)
+  const [facingMode, setFacingMode] = useState('environment'); // Default to rear
   const videoRef = useRef(null);
 
   const handleFlipCamera = () => {
@@ -17,16 +17,45 @@ function CameraView({ cameraStarted }) {
     let stream;
     const startCamera = async () => {
       try {
-        const constraints = {
-          video: { facingMode: facingMode },
+        const basicConstraints = {
+          video: { facingMode: { exact: facingMode } },
           audio: false,
         };
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        if (videoRef.current) {
+
+        stream = await navigator.mediaDevices.getUserMedia(basicConstraints);
+
+        if (stream && stream.getVideoTracks().length > 0 && videoRef.current) {
           videoRef.current.srcObject = stream;
+
+          // Attempt higher resolution (adaptive)
+          const highResConstraints = {
+            video: { width: 1920, height: 1080, facingMode: { exact: facingMode } },
+            audio: false,
+          };
+
+          navigator.mediaDevices
+            .getUserMedia(highResConstraints)
+            .then((highResStream) => {
+              if (highResStream && highResStream.getVideoTracks().length > 0 && videoRef.current) {
+                videoRef.current.srcObject = highResStream;
+                stream.getTracks().forEach((track) => track.stop()); // Stop basic stream
+                stream = highResStream; // Update stream reference.
+                console.log('High resolution camera stream active.');
+              }
+            })
+            .catch((highResError) => {
+              alert(highResError)
+              if (highResError.name === 'OverconstrainedError') {
+                console.log('High resolution not supported.');
+              } else {
+                console.error('High resolution error:', highResError);
+              }
+            });
         }
       } catch (error) {
         console.error('Error accessing camera:', error);
+        alert('asd',error)
+        // Handle error: Display message to user
       }
     };
 
