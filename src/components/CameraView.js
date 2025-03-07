@@ -1,69 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import Webcam from 'react-webcam';
+import React, { useState, useEffect, useRef } from 'react';
 import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 import './CameraCapture.css';
 
 function CameraView({ cameraStarted }) {
-  const [facingMode, setFacingMode] = useState(null);
+  const [facingMode, setFacingMode] = useState('user'); // Default to user (front)
+  const videoRef = useRef(null);
 
   const handleFlipCamera = () => {
     setFacingMode((prevFacingMode) =>
-      prevFacingMode === 'user' ? { exact: 'environment' } : 'user'
+      prevFacingMode === 'user' ? 'environment' : 'user'
     );
   };
 
-  const videoConstraints = {
-    facingMode: facingMode,
-  };
-
   useEffect(() => {
-    const getCameras = async () => {
+    let stream;
+    const startCamera = async () => {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        console.log('devices', devices);
-        const rearCamera = devices.find(
-          (device) =>
-            device.kind === 'videoinput' &&
-            (device.label.toLowerCase().includes('rear') ||
-              device.label.toLowerCase().includes('back') ||
-              device.label.toLowerCase().includes('environment'))
-        );
-        if (rearCamera) {
-          setFacingMode({ exact: rearCamera.deviceId });
-        } else {
-          setFacingMode('user');
+        const constraints = {
+          video: { facingMode: facingMode },
+          audio: false,
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
       } catch (error) {
-        console.error('Error getting camera devices:', error);
-        setFacingMode('user');
+        console.error('Error accessing camera:', error);
       }
     };
 
-    getCameras();
+    if (cameraStarted) {
+      startCamera();
+    }
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        console.log('Camera access granted!');
-      })
-      .catch((error) => {
-        console.error('Error accessing camera:', error);
-      });
-  }, []);
-
-  console.log('Current facingMode:', facingMode);
-  console.log('cameraStarted:', cameraStarted);
-  console.log('videoConstraints:', videoConstraints);
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [cameraStarted, facingMode]);
 
   return (
     <div className="camera-view-container">
-      {cameraStarted}
       {cameraStarted && (
         <>
-          <Webcam
-            audio={false}
-            videoConstraints={videoConstraints}
-            mirrored={facingMode === 'user'}
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
             style={{ maxWidth: '100%', maxHeight: '80vh' }}
           />
           <IconButton
