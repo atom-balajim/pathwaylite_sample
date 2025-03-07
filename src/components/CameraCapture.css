@@ -40,12 +40,14 @@
 
   /* src/components/CameraView.css */
 .camera-view-container {
-  width: 100%; /* Ensure container takes full width */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.camera-view-container webcam {
-  width: 100% !important; /* Force webcam to be 100% */
-  height: auto !important; /* Maintain aspect ratio */
+.camera-view-container video { /* Target the video element directly */
+  width: 100%;
+  object-fit: contain;
 }
 
 @media (max-width: 768px) {

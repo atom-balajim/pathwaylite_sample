@@ -27,7 +27,7 @@ function CameraView({ cameraStarted, onCapture }) {
             onTakePhoto={handleTakePhoto}
             idealFacingMode={facingMode}
             isImageMirror={facingMode === 'user'}
-            style={{ maxWidth: '100%', maxHeight: '80vh' }}
+            style={{ maxWidth: '100%', maxHeight: '60vh' }}
           />
           <IconButton
             onClick={handleFlipCamera}
