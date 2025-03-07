@@ -117,10 +117,10 @@ function CameraCapture() {
       <Grid container justifyContent="center" spacing={2} className="camera-capture-container">
         <Grid item xs={12} md={8}>
           <Paper elevation={3} className="camera-capture-paper">
-            <Typography variant="h6" gutterBottom className="camera-capture-header">
+            {!showVeratadResult && <Typography variant="h6" gutterBottom className="camera-capture-header">
               <CameraAltIcon className="camera-capture-icon" />
               Scan Barcode
-            </Typography>
+            </Typography>}
 
             {showVeratadResult ? (
               <VeratadResult capturedImage={capturedImage} onBack={() => setShowVeratadResult(false)} />
@@ -129,7 +129,7 @@ function CameraCapture() {
                 {imagePreview ? (
                   <ImagePreview imagePreview={imagePreview} handleRetake={handleRetake} />
                 ) : (
-                  <CameraView cameraStarted={cameraStarted} onCapture={handleCapture} />
+                  <CameraView cameraStarted={cameraStarted} onCapture={handleCapture} setShowVeratadResult={setShowVeratadResult}/>
                 )}
                 <ActionButtons
                   imagePreview={imagePreview}

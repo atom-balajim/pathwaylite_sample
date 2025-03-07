@@ -6,11 +6,12 @@ import { IconButton } from '@mui/material';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 import './CameraCapture.css';
 
-function CameraView({ cameraStarted, onCapture }) {
+function CameraView({ cameraStarted, onCapture,setShowVeratadResult }) {
   const [facingMode, setFacingMode] = useState('environment');
 
   const handleTakePhoto = (dataUri) => {
     onCapture(dataUri);
+    setShowVeratadResult(false)
   };
 
   const handleFlipCamera = () => {
@@ -27,7 +28,7 @@ function CameraView({ cameraStarted, onCapture }) {
             onTakePhoto={handleTakePhoto}
             idealFacingMode={facingMode}
             isImageMirror={facingMode === 'user'}
-            style={{ maxWidth: '100%', maxHeight: '60vh' }}
+            style={{ maxWidth: '80%', maxHeight: '40vh',objectFit: 'contain' }}
           />
           <IconButton
             onClick={handleFlipCamera}
