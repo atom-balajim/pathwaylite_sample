@@ -50,7 +50,7 @@ const hardcodedOcrResponse = {
       City: 'BELLEVUE',
       State: 'WA',
       Zip: '980084145',
-      CountryCode: 'US',
+      CountryCode: 'WA',
       FullAddress: '',
       DateOfBirth: '19800511',
       Height: '068 in',
