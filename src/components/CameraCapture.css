@@ -48,7 +48,7 @@
 .camera-view-container video { /* Target the video element directly */
   width: 100%;
   object-fit: contain;
-  max-height: 400px; /* Adjust as needed */
+  max-height: 700px; /* Adjust as needed */
 }
 
 @media (max-width: 768px) {
