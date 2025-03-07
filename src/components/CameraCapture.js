@@ -77,7 +77,6 @@ function CameraCapture() {
   const [cameraStarted, setCameraStarted] = useState(false);
   const [isImageCaptured, setIsImageCaptured] = useState(false);
   const [showVeratadResult, setShowVeratadResult] = useState(false);
-  const [forceUpdate1, forceUpdate] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleStartCamera = useCallback(() => {
@@ -87,7 +86,6 @@ function CameraCapture() {
 
   const handleCapture = (dataUri) => {
     dispatch(captureImage(dataUri));
-    forceUpdate({});
     setIsImageCaptured(true);
     setImagePreview(dataUri);
     handleSubmit();
