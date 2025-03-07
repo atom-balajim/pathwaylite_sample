@@ -9,7 +9,7 @@ function CameraView({ cameraStarted }) {
 
   const handleFlipCamera = () => {
     setFacingMode((prevFacingMode) =>
-      prevFacingMode === 'user' ? 'environment' : 'user'
+      prevFacingMode === 'user' ? { exact: 'environment' } : 'user'
     );
   };
 
@@ -35,6 +35,7 @@ function CameraView({ cameraStarted }) {
         }
       } catch (error) {
         console.error('Error getting camera devices:', error);
+        setFacingMode('user'); // Default to user if error occurs
       }
     };
 
@@ -47,34 +48,35 @@ function CameraView({ cameraStarted }) {
       .catch((error) => {
         console.error('Error accessing camera:', error);
       });
-  },);
+  }, []);
 
   console.log('Current facingMode:', facingMode);
 
   return (
     <div className="camera-view-container">
-      {facingMode}
-      <>
-        <Webcam
-          audio={false}
-          videoConstraints={videoConstraints}
-          mirrored={facingMode === 'user'}
-          style={{ maxWidth: '100%', maxHeight: '80vh' }}
-        />
-        <IconButton
-          onClick={handleFlipCamera}
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            zIndex: 100,
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-            padding: '8px',
-          }}
-        >
-          <FlipCameraAndroidIcon />
-        </IconButton>
-      </>
+      {cameraStarted && (
+        <>
+          <Webcam
+            audio={false}
+            videoConstraints={videoConstraints}
+            mirrored={facingMode === 'user'}
+            style={{ maxWidth: '100%', maxHeight: '80vh' }}
+          />
+          <IconButton
+            onClick={handleFlipCamera}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              zIndex: 100,
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              padding: '8px',
+            }}
+          >
+            <FlipCameraAndroidIcon />
+          </IconButton>
+        </>
+      )}
     </div>
   );
 }
