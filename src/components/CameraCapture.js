@@ -1,3 +1,4 @@
+// CameraCapture.js
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -79,38 +80,17 @@ function CameraCapture() {
   const [forceUpdate1, forceUpdate] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
 
-  console.log('forceUpdate1', forceUpdate1);
-
-  const handleStartCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      console.log('Camera access granted!', stream);
-      dispatch(startCamera());
-      setCameraStarted(true);
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-    }
+  const handleStartCamera = useCallback(() => {
+    dispatch(startCamera());
+    setCameraStarted(true);
   }, [dispatch]);
 
-  const handleCaptureImage = () => {
-    if (cameraStarted) {
-      const webcam = document.querySelector('video');
-      if (webcam) {
-        const canvas = document.createElement('canvas');
-        canvas.width = webcam.videoWidth;
-        canvas.height = webcam.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
-        const imageDataUrl = canvas.toDataURL('image/jpeg');
-
-        dispatch(captureImage(imageDataUrl));
-        forceUpdate({});
-        setIsImageCaptured(true);
-        setImagePreview(imageDataUrl);
-
-        handleSubmit();
-      }
-    }
+  const handleCapture = (dataUri) => {
+    dispatch(captureImage(dataUri));
+    forceUpdate({});
+    setIsImageCaptured(true);
+    setImagePreview(dataUri);
+    handleSubmit();
   };
 
   const handleRetake = () => {
@@ -120,19 +100,13 @@ function CameraCapture() {
   };
 
   const handleSubmit = async () => {
-    console.log('capturedImage:', capturedImage);
     dispatch(sendVeratad(capturedImage));
     try {
-      const response = hardcodedOcrResponse; // Using hardcoded response
+      const response = hardcodedOcrResponse;
       dispatch(veratadSuccess(response));
-      console.log('Veratad success dispatched');
       setShowVeratadResult(true);
     } catch (error) {
-      console.error('OCR error:', error);
-      dispatch(
-        veratadFailure(error.message || 'Error processing OCR data')
-      );
-      console.log('Veratad failure dispatched');
+      dispatch(veratadFailure(error.message || 'Error processing OCR data'));
     }
   };
 
@@ -142,43 +116,27 @@ function CameraCapture() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid
-        container
-        justifyContent="center"
-        spacing={2}
-        className="camera-capture-container"
-      >
+      <Grid container justifyContent="center" spacing={2} className="camera-capture-container">
         <Grid item xs={12} md={8}>
           <Paper elevation={3} className="camera-capture-paper">
-            <Typography
-              variant="h6"
-              gutterBottom
-              className="camera-capture-header"
-            >
+            <Typography variant="h6" gutterBottom className="camera-capture-header">
               <CameraAltIcon className="camera-capture-icon" />
               Camera Capture
             </Typography>
 
             {showVeratadResult ? (
-              <VeratadResult
-                capturedImage={capturedImage}
-                onBack={() => setShowVeratadResult(false)}
-              />
+              <VeratadResult capturedImage={capturedImage} onBack={() => setShowVeratadResult(false)} />
             ) : (
               <div style={{ textAlign: 'center' }}>
                 {imagePreview ? (
-                  <ImagePreview
-                    imagePreview={imagePreview}
-                    handleRetake={handleRetake}
-                  />
+                  <ImagePreview imagePreview={imagePreview} handleRetake={handleRetake} />
                 ) : (
-                  <CameraView cameraStarted={cameraStarted} />
+                  <CameraView cameraStarted={cameraStarted} onCapture={handleCapture} />
                 )}
                 <ActionButtons
                   imagePreview={imagePreview}
                   cameraStarted={cameraStarted}
                   handleStartCamera={handleStartCamera}
-                  handleCaptureImage={handleCaptureImage}
                   handleSubmit={handleSubmit}
                   isImageCaptured={isImageCaptured}
                 />

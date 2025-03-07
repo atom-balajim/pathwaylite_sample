@@ -1,13 +1,11 @@
-// src/components/ActionButtons.js
+// ActionButtons.js
 import React from 'react';
 import { Button, Grid } from '@mui/material';
-
 
 function ActionButtons({
   imagePreview,
   cameraStarted,
   handleStartCamera,
-  handleCaptureImage,
   handleSubmit,
   isImageCaptured,
 }) {
@@ -16,26 +14,27 @@ function ActionButtons({
       {imagePreview ? null : (
         <>
           <Grid item xs={12} sm={6}>
-            <Button variant="contained" color="primary" onClick={handleStartCamera} fullWidth>
-              Start Camera
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6}>
             <Button
               variant="contained"
               color="primary"
-              onClick={handleCaptureImage}
+              onClick={handleStartCamera}
               fullWidth
-              disabled={!cameraStarted}
             >
-              Capture Image
+              {cameraStarted ? 'Restart Camera' : 'Start Camera'}
             </Button>
           </Grid>
+
         </>
       )}
       {isImageCaptured && imagePreview && (
         <Grid item xs={12}>
-          <Button variant="contained" color="success" onClick={handleSubmit} fullWidth className="action-buttons-submit">
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleSubmit}
+            fullWidth
+            className="action-buttons-submit"
+          >
             Submit
           </Button>
         </Grid>
