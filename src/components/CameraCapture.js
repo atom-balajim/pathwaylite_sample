@@ -74,7 +74,7 @@ function CameraCapture() {
   const dispatch = useDispatch();
   const capturedImage = useSelector((state) => state.other.capturedImage);
   const [openDialog, setOpenDialog] = useState(false);
-  const [cameraStarted, setCameraStarted] = useState(false);
+  const [cameraStarted, setCameraStarted] = useState(true);
   const [isImageCaptured, setIsImageCaptured] = useState(false);
   const [showVeratadResult, setShowVeratadResult] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -94,7 +94,7 @@ function CameraCapture() {
   const handleRetake = () => {
     setImagePreview(null);
     setIsImageCaptured(false);
-    setCameraStarted(false);
+    setCameraStarted(true);
   };
 
   const handleSubmit = async () => {
@@ -119,7 +119,7 @@ function CameraCapture() {
           <Paper elevation={3} className="camera-capture-paper">
             <Typography variant="h6" gutterBottom className="camera-capture-header">
               <CameraAltIcon className="camera-capture-icon" />
-              Camera Capture
+              Scan Barcode
             </Typography>
 
             {showVeratadResult ? (

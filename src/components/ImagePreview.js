@@ -4,12 +4,12 @@ import { Box, Button, Grid } from '@mui/material';
 
 function ImagePreview({ imagePreview, handleRetake }) {
   return (
-    <div style={{ marginBottom: '10px' }}>
+    <div style={{ marginBottom: '10px'}}>
       <Box display="flex" justifyContent="center">
         <img src={imagePreview} alt="Captured Preview" className="image-preview-img" style={{ maxWidth: '100%', maxHeight: '80vh' }} />
       </Box>
-      <Grid container spacing={2} className="image-preview-retake">
-        <Grid item xs={12}>
+      <Grid container spacing={2} className="image-preview-retake" style={{ width:"100%", display:"flex", justifyContent:"center", paddingLeft:"16px", marginTop:"10px" }}>
+        <Grid item xs={6}>
           <Button variant="contained" color="primary" onClick={handleRetake} fullWidth style={{ color: '#fff' }}>
             Retake
           </Button>
