@@ -21,6 +21,7 @@ function CameraView({ cameraStarted }) {
     const getCameras = async () => {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
+        console.log('devices', devices);
         const rearCamera = devices.find(
           (device) =>
             device.kind === 'videoinput' &&
@@ -35,7 +36,7 @@ function CameraView({ cameraStarted }) {
         }
       } catch (error) {
         console.error('Error getting camera devices:', error);
-        setFacingMode('user'); // Default to user if error occurs
+        setFacingMode('user');
       }
     };
 
@@ -51,9 +52,12 @@ function CameraView({ cameraStarted }) {
   }, []);
 
   console.log('Current facingMode:', facingMode);
+  console.log('cameraStarted:', cameraStarted);
+  console.log('videoConstraints:', videoConstraints);
 
   return (
     <div className="camera-view-container">
+      {cameraStarted}
       {cameraStarted && (
         <>
           <Webcam
